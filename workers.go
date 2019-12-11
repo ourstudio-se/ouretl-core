@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"plugin"
@@ -90,7 +90,7 @@ func initiateWorker(worker ouretl.WorkerPlugin, proxy func([]byte), name string)
 func newMessageProxy(channel chan<- *defaultDataMessage, name string) func([]byte) {
 	return func(data []byte) {
 		dataMessage := &defaultDataMessage{
-			id:     newID(),
+			id:     uuid.NewV4().String(),
 			data:   data,
 			origin: name,
 		}
@@ -106,13 +106,4 @@ func containsWorker(haystack []string, needle string) bool {
 	}
 
 	return false
-}
-
-func newID() string {
-	id, err := uuid.NewV4()
-	if err != nil {
-		id = uuid.Nil
-	}
-
-	return id.String()
 }
