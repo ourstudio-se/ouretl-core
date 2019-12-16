@@ -8,7 +8,7 @@ import (
 )
 
 func TestThatReadConfigOfMissingFileFails(t *testing.T) {
-	_, err := newDefaultConfigFromTOMLFile("/tmp/missing-file")
+	_, err := NewDefaultConfigFromTOMLFile("/tmp/missing-file")
 	if err == nil {
 		t.Errorf("Missing file did not cause error when reading config")
 	}
@@ -19,7 +19,7 @@ func TestThatReadConfigOfTOMLFileSucceeds(t *testing.T) {
 	configString := "default_plugin_path = \"/tmp/plugins\"\n\n"
 	ioutil.WriteFile(configFilePath, []byte(configString), 0600)
 
-	_, err := newDefaultConfigFromTOMLFile(configFilePath)
+	_, err := NewDefaultConfigFromTOMLFile(configFilePath)
 	if err != nil {
 		t.Error(err)
 	}
@@ -30,7 +30,7 @@ func TestThatReadConfigPopulateValues(t *testing.T) {
 	configString := "default_plugin_path = \"/tmp/plugins\"\n\n[[plugin]]\nname = \"test-1\"\npath = \"/tmp/test-1\"\nversion = \"1.0.0\"\nactive = false\n\n[[plugin]]\nname = \"test-2\"\npath = \"/tmp/test-2\"\nversion = \"1.0.0\"\nactive = false\n\n"
 	ioutil.WriteFile(configFilePath, []byte(configString), 0600)
 
-	config, err := newDefaultConfigFromTOMLFile(configFilePath)
+	config, err := NewDefaultConfigFromTOMLFile(configFilePath)
 	if err != nil {
 		t.Error(err)
 	}
