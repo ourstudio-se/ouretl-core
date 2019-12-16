@@ -12,7 +12,7 @@ import (
 func NewWorker(definition ouretl.PluginDefinition, config ouretl.Config) ouretl.WorkerPlugin {
 	p, err := plugin.Open(definition.FilePath())
 	if err != nil {
-		log.Errorf("Plugin '%s (v%s)' could not be found at path '%s'", definition.Name(), definition.Version(), definition.FilePath())
+		log.Errorf("Plugin '%s (v%s)' could not be found at path '%s': %s, definition.Name(), definition.Version(), definition.FilePath(), err.Error()")
 		return nil
 	}
 
