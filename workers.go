@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func newWorker(definition ouretl.PluginDefinition, config ouretl.Config) ouretl.WorkerPlugin {
+func NewWorker(definition ouretl.PluginDefinition, config ouretl.Config) ouretl.WorkerPlugin {
 	p, err := plugin.Open(definition.FilePath())
 	if err != nil {
 		log.Errorf("Plugin '%s (v%s)' could not be found at path '%s'", definition.Name(), definition.Version(), definition.FilePath())
@@ -39,10 +39,10 @@ func newWorker(definition ouretl.PluginDefinition, config ouretl.Config) ouretl.
 	return worker
 }
 
-func newWorkerPool(channel chan<- *defaultDataMessage, config ouretl.Config) []string {
+func NewWorkerPool(channel chan<- *DefaultDataMessage, config ouretl.Config) []string {
 	var sources []string
 	for _, definition := range config.PluginDefinitions() {
-		worker := newWorker(definition, config)
+		worker := NewWorker(definition, config)
 		if worker == nil {
 			continue
 		}
@@ -54,11 +54,11 @@ func newWorkerPool(channel chan<- *defaultDataMessage, config ouretl.Config) []s
 	return sources
 }
 
-func newWorkerPoolFromConfig(channel chan<- *defaultDataMessage, config ouretl.Config) {
-	pool := newWorkerPool(channel, config)
+func NewWorkerPoolFromConfig(channel chan<- *DefaultDataMessage, config ouretl.Config) {
+	pool := NewWorkerPool(channel, config)
 
 	config.OnPluginDefinitionAdded(func(pdef ouretl.PluginDefinition) {
-		worker := newWorker(pdef, config)
+		worker := NewWorker(pdef, config)
 		if worker != nil {
 			pool = append(pool, pdef.Name())
 			startWorker(worker, channel, pdef.Name())
@@ -69,7 +69,7 @@ func newWorkerPoolFromConfig(channel chan<- *defaultDataMessage, config ouretl.C
 	log.Infof("%d `WorkerPlugin` implementations loaded", len(pool))
 }
 
-func startWorker(worker ouretl.WorkerPlugin, channel chan<- *defaultDataMessage, name string) {
+func startWorker(worker ouretl.WorkerPlugin, channel chan<- *DefaultDataMessage, name string) {
 	proxy := newMessageProxy(channel, name)
 	go initiateWorker(worker, proxy, name)
 }
@@ -87,9 +87,9 @@ func initiateWorker(worker ouretl.WorkerPlugin, proxy func([]byte), name string)
 	}
 }
 
-func newMessageProxy(channel chan<- *defaultDataMessage, name string) func([]byte) {
+func newMessageProxy(channel chan<- *DefaultDataMessage, name string) func([]byte) {
 	return func(data []byte) {
-		dataMessage := &defaultDataMessage{
+		dataMessage := &DefaultDataMessage{
 			id:     uuid.NewV4().String(),
 			data:   data,
 			origin: name,

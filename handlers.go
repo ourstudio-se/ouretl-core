@@ -13,7 +13,7 @@ type wrapper struct {
 	implementation ouretl.DataHandlerPlugin
 }
 
-func newHandler(definition ouretl.PluginDefinition, config ouretl.Config) *wrapper {
+func NewHandler(definition ouretl.PluginDefinition, config ouretl.Config) *wrapper {
 	p, err := plugin.Open(definition.FilePath())
 	if err != nil {
 		log.Errorf("Plugin '%s (v%s)' could not be found at path '%s'", definition.Name(), definition.Version(), definition.FilePath())
@@ -46,10 +46,10 @@ func newHandler(definition ouretl.PluginDefinition, config ouretl.Config) *wrapp
 	}
 }
 
-func newHandlerPool(config ouretl.Config) []*wrapper {
+func NewHandlerPool(config ouretl.Config) []*wrapper {
 	var pool []*wrapper
 	for _, definition := range config.PluginDefinitions() {
-		wrapper := newHandler(definition, config)
+		wrapper := NewHandler(definition, config)
 		if wrapper == nil {
 			continue
 		}
@@ -60,11 +60,11 @@ func newHandlerPool(config ouretl.Config) []*wrapper {
 	return pool
 }
 
-func newHandlerPoolFromConfig(channel <-chan *defaultDataMessage, config ouretl.Config) {
-	pool := newHandlerPool(config)
+func NewHandlerPoolFromConfig(channel <-chan *DefaultDataMessage, config ouretl.Config) {
+	pool := NewHandlerPool(config)
 
 	config.OnPluginDefinitionAdded(func(pdef ouretl.PluginDefinition) {
-		wrapper := newHandler(pdef, config)
+		wrapper := NewHandler(pdef, config)
 		if wrapper != nil {
 			pool = append(pool, wrapper)
 			log.Infof("`DataHandlerPlugin` '%s (v%s)' added, a total of %d `DataHandlerPlugin` implementations loaded", pdef.Name(), pdef.Version(), len(pool))
@@ -81,7 +81,7 @@ func newHandlerPoolFromConfig(channel <-chan *defaultDataMessage, config ouretl.
 	}
 }
 
-func proxyDataMessage(pool []*wrapper, dm *defaultDataMessage) {
+func proxyDataMessage(pool []*wrapper, dm *DefaultDataMessage) {
 	log.Debugf("Processing a new message with ID '%s', initiated from worker '%s'", dm.ID(), dm.Origin())
 	startedAt := time.Now()
 
@@ -109,7 +109,7 @@ func proxyDataMessage(pool []*wrapper, dm *defaultDataMessage) {
 	}
 }
 
-func newDataFunc(w *wrapper, dm *defaultDataMessage, fn func([]byte) error) func(data []byte) error {
+func newDataFunc(w *wrapper, dm *DefaultDataMessage, fn func([]byte) error) func(data []byte) error {
 	return func(data []byte) error {
 		log.Debugf("DataHandlerPlugin '%s (v%s)' receiving message with ID '%s'", w.definition.Name(), w.definition.Version(), dm.ID())
 		return w.implementation.Handle(dm.withData(data), fn)
