@@ -48,7 +48,7 @@ func (m *mockPluginImpl) Handle(dm ouretl.DataMessage, next func([]byte) error) 
 
 func TestThatPushedMessageReachesActiveHandlersInPipeline(t *testing.T) {
 	config := newDefaultConfig()
-	pool := newHandlerPool(config)
+	pool := NewHandlerPool(config)
 
 	var wg sync.WaitGroup
 	wg.Add(3)
@@ -78,7 +78,7 @@ func TestThatPushedMessageReachesActiveHandlersInPipeline(t *testing.T) {
 	pool = append(pool, p1)
 	pool = append(pool, p2)
 	pool = append(pool, p3)
-	proxyDataMessage(pool, &defaultDataMessage{id: "test", data: []byte("test")})
+	proxyDataMessage(pool, &DefaultDataMessage{id: "test", data: []byte("test")})
 
 	wg.Wait()
 
@@ -95,7 +95,7 @@ func TestThatPushedMessageReachesActiveHandlersInPipeline(t *testing.T) {
 
 func TestThatPushedMessageDoesntReachInactiveHandlersInPipeline(t *testing.T) {
 	config := newDefaultConfig()
-	pool := newHandlerPool(config)
+	pool := NewHandlerPool(config)
 
 	var wg sync.WaitGroup
 	wg.Add(2)
@@ -125,7 +125,7 @@ func TestThatPushedMessageDoesntReachInactiveHandlersInPipeline(t *testing.T) {
 	pool = append(pool, p1)
 	pool = append(pool, p2)
 	pool = append(pool, p3)
-	proxyDataMessage(pool, &defaultDataMessage{id: "test", data: []byte("test")})
+	proxyDataMessage(pool, &DefaultDataMessage{id: "test", data: []byte("test")})
 
 	wg.Wait()
 

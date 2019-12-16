@@ -1,24 +1,24 @@
 package core
 
-type defaultDataMessage struct {
+type DefaultDataMessage struct {
 	id     string
 	data   []byte
 	origin string
 }
 
-func (dm *defaultDataMessage) ID() string {
+func (dm *DefaultDataMessage) ID() string {
 	return dm.id
 }
 
-func (dm *defaultDataMessage) Data() []byte {
+func (dm *DefaultDataMessage) Data() []byte {
 	return dm.data
 }
 
-func (dm *defaultDataMessage) Origin() string {
+func (dm *DefaultDataMessage) Origin() string {
 	return dm.origin
 }
 
-func (dm *defaultDataMessage) withData(data []byte) *defaultDataMessage {
+func (dm *DefaultDataMessage) withData(data []byte) *DefaultDataMessage {
 	dm.data = data
 	return dm
 }

@@ -33,7 +33,7 @@ func newDefaultConfig() ouretl.Config {
 	return &defaultConfig{Definitions: definitions}
 }
 
-func newDefaultConfigFromTOMLFile(configFilePath string) (ouretl.Config, error) {
+func NewDefaultConfigFromTOMLFile(configFilePath string) (ouretl.Config, error) {
 	config, err := readConfigFromFile(configFilePath)
 	if err != nil {
 		return nil, err
